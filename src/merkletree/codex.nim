@@ -3,10 +3,7 @@
 # remove this file altogether. You may create additional modules alongside
 # this file as required.
 
-type
-  Submodule* = object
-    name*: string
+import ./codex/codex
+import ./codex/coders
 
-proc initSubmodule*(): Submodule =
-  ## Initialises a new ``Submodule`` object.
-  Submodule(name: "Anonymous")
+export codex, coders
