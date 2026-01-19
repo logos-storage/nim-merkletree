@@ -15,12 +15,13 @@ import std/sequtils
 import pkg/questionable
 import pkg/questionable/results
 import pkg/libp2p/[cid, multicodec, multihash]
-import pkg/merkletree
+import pkg/merkletree/merkletree
 # import ../../utils
 # import ../../rng
 # import ../../errors
 # import ../../blocktype
 import ../utils/digest
+import ../utils/errors
 
 export merkletree
 
