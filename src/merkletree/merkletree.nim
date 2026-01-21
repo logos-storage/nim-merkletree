@@ -371,10 +371,14 @@ proc compute*[H, K](
   defer:
     signal.close().expect("closing once works")
 
+  let storeView = SharedBuf.view(self.store)
+  let layerOffsets = SharedBuf.view(self.layerOffsets)
+  let compress = addr self.compress
+
   let res = tp.spawn merkleTreeWorker(
-    SharedBuf.view(self.store),
-    SharedBuf.view(self.layerOffsets),
-    addr self.compress,
+    storeView,
+    layerOffsets,
+    compress,
     signal,
   )
 
