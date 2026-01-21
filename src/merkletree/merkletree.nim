@@ -13,12 +13,12 @@ import std/[bitops, atomics, sequtils]
 import pkg/taskpools
 import pkg/chronos
 import pkg/chronos/threadsync
-# import pkg/libp2p/[multicodec]
 import pkg/stew/assign2
 import pkg/questionable/results
-import pkg/merkletree/utils/sharedbuf
 
-export sharedbuf
+import ./utils/sharedbuf
+
+export sharedbuf, ThreadSignalPtr
 
 template nodeData(
     data: openArray[byte], offsets: openArray[int], nodeSize, i, j: int
@@ -33,7 +33,7 @@ type
   #      significantly simplify the flow below
   CompressFn*[H, K] = proc(x, y: H, key: K): ?!H {.noSideEffect, raises: [].}
 
-  CompressData[H, K] = object
+  CompressData*[H, K] = object
     fn: CompressFn[H, K]
     nodeSize: int
     zero: H

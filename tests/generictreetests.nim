@@ -1,13 +1,24 @@
-import pkg/unittest2
-
 import pkg/merkletree
+import pkg/nimcrypto/sha2
+import pkg/results
+import pkg/questionable/results
+import pkg/stew/byteutils
+import pkg/chronos
+import pkg/asynctest/chronos/unittest2
+
+type
+  ByteTreeKey* {.pure.} = enum
+    KeyNone = 0x0.byte
+    KeyBottomLayer = 0x1.byte
+    KeyOdd = 0x2.byte
+    KeyOddAndBottomLayer = 0x3.byte
 
 proc testGenericTree*[H, K, U](
     name: string,
     data: openArray[H],
     zero: H,
-    compress: proc(z, y: H, key: K): H,
-    makeTree: proc(data: seq[H]): U,
+    compress: proc(z, y: H, key: K): H {.gcsafe, raises: [].},
+    makeTree: proc(data: seq[H]): Future[U] {.async.},
 ) =
   let data = @data
 
@@ -27,7 +38,7 @@ proc testGenericTree*[H, K, U](
         K.KeyNone,
       )
 
-      let tree = makeTree(data[0 .. 7])
+      let tree = await makeTree(data[0 .. 7])
 
       check:
         tree.root.tryGet == expectedRoot
@@ -47,7 +58,7 @@ proc testGenericTree*[H, K, U](
         K.KeyNone,
       )
 
-      let tree = makeTree(data[0 .. 6])
+      let tree = await makeTree(data[0 .. 6])
 
       check:
         tree.root.tryGet == expectedRoot
@@ -75,7 +86,7 @@ proc testGenericTree*[H, K, U](
         K.KeyNone,
       )
 
-      let tree = makeTree(data[0 .. 9])
+      let tree = await makeTree(data[0 .. 9])
 
       check:
         tree.root.tryGet == expectedRoot
@@ -103,9 +114,13 @@ proc testGenericTree*[H, K, U](
         K.KeyNone,
       )
 
-      let tree = makeTree(data)
+      let tree = await makeTree(data)
 
       for i in 0 ..< data.len:
         let proof = tree.getProof(i).tryGet
         check:
           proof.verify(tree.leaves[i], expectedRoot).isOk
+
+
+
+
