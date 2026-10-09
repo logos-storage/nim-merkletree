@@ -228,7 +228,7 @@ func verify*[H, K](proof: MerkleProof[H, K], leaf: H, root: H): ?!bool =
 
 func fromNodes*[H, K](
     self: MerkleTree[H, K],
-    compressor: CompressFn,
+    compressor: CompressFn[H, K],
     zero: H,
     nodes: openArray[H],
     nleaves: int,
@@ -331,7 +331,7 @@ proc merkleTreeWorker[H, K](
   return res.isOk()
 
 func prepare*[H, K](
-    self: MerkleTree[H, K], compressor: CompressFn, zero: H, leaves: openArray[H]
+    self: MerkleTree[H, K], compressor: CompressFn[H, K], zero: H, leaves: openArray[H]
 ): ?!void =
   ## Prepare the instance for computing the merkle tree of the given leaves using
   ## the given compression function. After preparation, `compute` should be
