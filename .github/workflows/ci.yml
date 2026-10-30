@@ -29,4 +29,10 @@ jobs:
       run: nimble install -y nimble
 
     - name: Test
-      run: nimble test -y
+      shell: bash
+      run: |
+        nimble test -y 2>&1 | tee test.log
+        if grep "Expensive;" test.log; then
+          echo "::error::Expensive warning found: avoid calling layer, leaves or layers"
+          exit 1
+        fi
