@@ -1,6 +1,6 @@
 # Package
 
-version       = "0.1.0"
+version       = "1.0.1"
 author        = "Logos Storage team"
 description   = "Merkle tree implementation used for Logos Storage"
 license       = "MIT"
@@ -9,7 +9,7 @@ srcDir        = "src"
 # Dependencies
 requires "nim >= 2.2.6"
 requires "questionable ~= 0.10.15"
-requires "stew ~= 0.4.2"
+requires "stew >= 0.4.2 & < 0.6.0"
 requires "taskpools >= 0.2.0 & < 0.3.0"
 requires "chronos >= 4.2.2 & < 5.0.0"
 requires "asynctest ~= 0.5.4"
