@@ -124,24 +124,27 @@ template nodeData(self: MerkleTreeObj, i, j: int): openArray[byte] =
   ## leaves (at level 0).
   self.store.nodeData(self.layerOffsets, self.compress.nodeSize, i, j)
 
-func layer*[H, K](
-    self: MerkleTree[H, K], layer: int
-): seq[H] {.deprecated: "Expensive".} =
+func layerNodes[H, K](self: MerkleTree[H, K], layer: int): seq[H] =
   var nodes = newSeq[H](self.nodesInLayer(layer))
   for i, h in nodes.mpairs:
     assign(h, self[].nodeData(layer, i))
   return nodes
 
+func layer*[H, K](
+    self: MerkleTree[H, K], layer: int
+): seq[H] {.deprecated: "Expensive".} =
+  self.layerNodes(layer)
+
 func leaves*[H, K](self: MerkleTree[H, K]): seq[H] {.deprecated: "Expensive".} =
-  self.layer(0)
+  self.layerNodes(0)
 
 iterator layers*[H, K](self: MerkleTree[H, K]): seq[H] {.deprecated: "Expensive".} =
   for i in 0 ..< self.layerOffsets.len:
-    yield self.layer(i)
+    yield self.layerNodes(i)
 
 proc layers*[H, K](self: MerkleTree[H, K]): seq[seq[H]] {.deprecated: "Expensive".} =
-  for l in self.layers():
-    result.add l
+  for i in 0 ..< self.layerOffsets.len:
+    result.add self.layerNodes(i)
 
 iterator nodes*[H, K](self: MerkleTree[H, K]): H =
   ## Iterate over the nodes of each layer starting with the leaves
